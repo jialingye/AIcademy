@@ -1,7 +1,11 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Course
+from .serializers import CourseSerializer
 # Create your views here.
 
+@api_view(['GET'])
 def getRoutes(resquest):
     routes = [
         {
@@ -35,4 +39,27 @@ def getRoutes(resquest):
             'description': 'Deletes and exiting note'
         },
     ]
-    return JsonResponse(routes, safe=False)
+    return Response(routes)
+
+@api_view(['GET'])
+def getCourses(request):
+    courses = Course.objects.all()
+    serializer = CourseSerializer(courses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getCourse(request, pk):
+    course = Course.objects.get(id = pk)
+    serializer = CourseSerializer(course, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def updateCourse(request, pk):
+    data = request.data
+    course = Course.objects.get(id=pk)
+    serializer = CourseSerializer(instance=course, data=data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
