@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Course
-from .serializers import CourseSerializer
+from .models import Course, Lesson, Assessment
+from .serializers import CourseSerializer, LessonSerializer
 # Create your views here.
 
 @api_view(['GET'])
@@ -62,4 +62,16 @@ def updateCourse(request, pk):
     if serializer.is_valid():
         serializer.save()
 
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getLesson(request, pk, lesson_pk):
+    lesson = Lesson.objects.get(course_id = pk, id = lesson_pk)
+    serializer = LessonSerializer(lesson, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getAssessments(request, pk):
+    assessment = Assessment.objects.get(id = pk)
+    serializer = LessonSerializer(assessment, many=False)
     return Response(serializer.data)
