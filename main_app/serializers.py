@@ -1,11 +1,17 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Course, Lesson, Assessment
+from .models import Course, Lesson, Assessment, Score
+
+class ScoreSerializer(ModelSerializer):
+    class Meta:
+        model = Score
+        fields = '__all__'
 
 class AssessmentSerializer(ModelSerializer):
+    scores = ScoreSerializer(many=True, read_only=True)
     class Meta:
         model = Assessment
         fields = '__all__'
-        
+
 class LessonSerializer(ModelSerializer):
     assessments = AssessmentSerializer(many=True, read_only=True)
     class Meta:
@@ -17,4 +23,3 @@ class CourseSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = ['id','title', 'description', 'tag', 'is_complete', 'updated', 'created', 'instructor', 'students', 'lessons']
-

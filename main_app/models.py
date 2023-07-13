@@ -56,6 +56,7 @@ class StudentInput(models.Model):
 class Score(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="scores")
     score = models.IntegerField()
+    input = models.TextField(default="")
     explanation = models.TextField()
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="score")
 

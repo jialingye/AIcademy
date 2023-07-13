@@ -9,6 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
+
+import environ
+environ.Env()
+environ.Env.read_env()
 
 from pathlib import Path
 
@@ -20,6 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 SECRET_KEY = 'django-insecure-y-beg1$+zea1xdl!+%76xhynewmf!b+2!du%e7$(nacvrb87!2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
