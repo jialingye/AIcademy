@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 import openai
 from django.conf import settings
 from rest_framework import status
@@ -62,6 +63,17 @@ def updateCourse(request, pk):
 
     return Response(serializer.data)
 
+@api_view(['DELETE'])
+def deleteCourse(request, pk):
+    
+    course=get_object_or_404
+    course.description = request.data.get('description', course.description)
+    course.tag=request.data.get('tag', course.tag)
+    course.save()
+    serializer = CourseSerializer(course)
+
+    return Response(serializer.data)
+
 @api_view(['GET'])
 def getLesson(request, pk, lesson_pk):
     lesson = Lesson.objects.get(course_id = pk, id = lesson_pk)
@@ -113,7 +125,9 @@ def getAssessments(request, pk):
 def createAssessment(request, pk):
     try:
         lesson = Lesson.objects.get(id=pk)
+        print('get course')
     except Lesson.DoesNotExist:
+        print('course not found')
         return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
 
     question= request.data.get('question')
@@ -124,6 +138,29 @@ def createAssessment(request, pk):
     )
     serializer = AssessmentSerializer(assessment, many=False)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['PUT'])
+def updateAssessment(request, pk):
+    try:
+        assessment = Assessment.objects.get(id=pk)
+    except Assessment.DoesNotExist:
+        return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    # if request.user != course.instructor:
+    #     raise PermissionDenied('You do not have permission to update this course.')
+    
+    assessment.question = request.data.get('question', assessment.question)
+    assessment.save()
+    serializer = AssessmentSerializer(assessment)
+
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteAssessment(request, pk):
+    assessment = Assessment.objects.get(id=pk)
+    assessment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['POST'])
 def createScore(request, pk):
@@ -146,6 +183,21 @@ def createScore(request, pk):
         explanation=explanation
     )
     serializer = ScoreSerializer(student_score, many=False)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['PUT'])
+def updateScore(request, pk):
+    try:
+        score = Score.objects.get(id=pk)
+    except Score.DoesNotExist:
+        return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    score.score = request.data.get('score', score.score)
+    score.input = request.data.get('input', score.input)
+    score.explanation = request.data.get('explanation', score.explanation)
+    score.save()
+   
+    serializer = ScoreSerializer(score, many=False)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
