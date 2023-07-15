@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
+from .views import MyTokenObtainPairView
 
+from rest_framework_simplejwt.views import(
+    TokenRefreshView,
+)
 urlpatterns = [
     path('', views.getCourses, name="courses"),
     path('courses/', views.getCourses, name="courses"),
@@ -17,5 +21,8 @@ urlpatterns = [
     path('assessments/<int:pk>/delete/', views.deleteAssessment, name='delete_assessment'),
     path('assessments/<int:pk>/score/', views.createScore, name='create_score'),
     path('score/<int:pk>/update/', views.updateScore, name='update_score'),
-    path('aiscore/', views.AiScore, name="ai_score")
+    path('aiscore/', views.AiScore, name="ai_score"),
+    path('login/', views.logIn, name='logIn'),
+    path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

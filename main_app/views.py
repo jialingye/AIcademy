@@ -7,10 +7,35 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from .models import Course, Lesson, Assessment, Score
 from .serializers import CourseSerializer, LessonSerializer, AssessmentSerializer, ScoreSerializer
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        # ...
+
+        return token
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+
+
+
+
 
 
 @api_view(['GET'])
@@ -221,5 +246,26 @@ def AiScore(request):
     except Exception as e:
         print('ChatGPT API request error:', str(e))
         return Response({'error':'An error occurred during the API request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+def logIn(request):
+    username= request.data.get('username')
+    password= request.data.get('password')
+
+    user= authenticate(username=username, password=password)
+ 
+    if user is not None:
+        login(request,user)
+        token, _ = Token.objects.get_or_create(user=user)
+        user_info = {
+            'token': token.key, 
+            'message':'Logged in successfully',
+            'username':user.username,
+            'user_id':user.id
+        }
+        print(user_info)
+        return Response(user_info)
+    else:
+        return Response({'error':'Invalid credentials'})
     
     
