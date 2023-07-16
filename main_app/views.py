@@ -17,6 +17,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
 
+########################################Authentication###########################################################
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -33,11 +34,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-
-
-
-
-
+#################################################Courses###########################################################
 @api_view(['GET'])
 def getCourses(request):
     courses = Course.objects.all()
@@ -90,15 +87,16 @@ def updateCourse(request, pk):
 
 @api_view(['DELETE'])
 def deleteCourse(request, pk):
+    try:       
+        course = Course.objects.get(id=pk)
+        print(course)
+    except Course.DoesNotExist:
+        return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
     
-    course=get_object_or_404
-    course.description = request.data.get('description', course.description)
-    course.tag=request.data.get('tag', course.tag)
-    course.save()
-    serializer = CourseSerializer(course)
+    course.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
-    return Response(serializer.data)
-
+#################################################Lessons###########################################################
 @api_view(['GET'])
 def getLesson(request, pk, lesson_pk):
     lesson = Lesson.objects.get(course_id = pk, id = lesson_pk)
@@ -140,6 +138,13 @@ def updateLesson(request, pk):
 
     return Response(serializer.data)
 
+@api_view(['DELETE'])
+def deleteLesson(request, pk):
+    lesson = Lesson.objects.get(id=pk)
+    lesson.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+#################################################Assessment#################################################
 @api_view(['GET'])
 def getAssessments(request, pk):
     assessment = Assessment.objects.get(id = pk)
@@ -186,7 +191,7 @@ def deleteAssessment(request, pk):
     assessment.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+##################################---------------Scores-----------------------##################################
 @api_view(['POST'])
 def createScore(request, pk):
     user_id = request.data.get('student')
@@ -247,25 +252,5 @@ def AiScore(request):
         print('ChatGPT API request error:', str(e))
         return Response({'error':'An error occurred during the API request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(['POST'])
-def logIn(request):
-    username= request.data.get('username')
-    password= request.data.get('password')
-
-    user= authenticate(username=username, password=password)
- 
-    if user is not None:
-        login(request,user)
-        token, _ = Token.objects.get_or_create(user=user)
-        user_info = {
-            'token': token.key, 
-            'message':'Logged in successfully',
-            'username':user.username,
-            'user_id':user.id
-        }
-        print(user_info)
-        return Response(user_info)
-    else:
-        return Response({'error':'Invalid credentials'})
     
     
