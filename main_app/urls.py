@@ -26,6 +26,8 @@ urlpatterns = [
     path('aiscore/', views.AiScore, name="ai_score"),
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('collection/new', views.CollectionCreate, name="collection_create"),
+    path('collection/', views.GetCollections, name="get_collection"),
+    path('collection/<int:pk>/', views.UserCollection, name="user_collection"),
+    path('collection/new/', views.CollectionCreate, name="collection_create"),
     path('collection/<int:pk>/courses/<int:course_pk>/', views.CollectionAssoc, name="collection_assoc")
 ]

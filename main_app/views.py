@@ -287,6 +287,7 @@ def CollectionCreate(request):
     collection = CourseCollection.objects.create(
         title=title,
         description =description,
+        owner=user
     )
     try:
         course_id = request.data.get('course', [])
@@ -318,3 +319,19 @@ def CollectionAssoc(request, pk, course_pk):
     if asso == "remove":
         collection.course.remove(course)
         return Response({'message': 'Unerolled successfully'}, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+def GetCollections(request):
+    collection = CourseCollection.objects.all()
+    serializer = CollectionSerializer(collection, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def UserCollection(request, pk):
+    try:
+        user = get_object_or_404(User, pk=pk)
+        user_collection = CourseCollection.objects.filter(user=user)
+        serializer = CollectionSerializer(user_collection, many=True)
+        return Response(serializer.data)
+    except CourseCollection.DoesNotExist:
+        return Response(status.HTTP_404_NOT_FOUND)
