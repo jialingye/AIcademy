@@ -10,8 +10,8 @@ from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from .models import Course, Lesson, Assessment, Score
-from .serializers import CourseSerializer, LessonSerializer, AssessmentSerializer, ScoreSerializer
+from .models import Course, Lesson, Assessment, Score, CourseCollection
+from .serializers import CourseSerializer, LessonSerializer, AssessmentSerializer, ScoreSerializer, CollectionSerializer
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -95,6 +95,26 @@ def deleteCourse(request, pk):
     
     course.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def studentAsso(request, pk, student_pk):
+    try:
+        student=User.objects.get(id=student_pk)
+        course= Course.objects.get(id=pk)
+    except User.DoesNotExist:
+        return Response({'error':'Student not found'}, status=status.HTTP_204_NO_CONTENT)
+    except Course.DoesNotExist:
+        return Response({'error':'Course not found'}, status=status.HTTP_204_NO_CONTENT)
+    
+    asso = request.data.get('asso')
+    if asso == "add":
+        course.students.add(student)
+        return Response({'message': 'Enrolled successfully'}, status=status.HTTP_200_OK)
+    if asso == "remove":
+        course.students.remove(student)
+        return Response({'message': 'Unerolled successfully'}, status=status.HTTP_200_OK)
+
 
 #################################################Lessons###########################################################
 @api_view(['GET'])
@@ -252,5 +272,49 @@ def AiScore(request):
         print('ChatGPT API request error:', str(e))
         return Response({'error':'An error occurred during the API request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+##################################---------------Collection-----------------------##################################   
+@api_view(['POST'])
+def CollectionCreate(request):
+    user_id = request.data.get('user')
+    try: 
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status= status.HTTP_404_NOT_FOUND)
     
+    title= request.data.get('title')
+    description = request.data.get('description')
+
+    collection = CourseCollection.objects.create(
+        title=title,
+        description =description,
+    )
+    try:
+        course_id = request.data.get('course', [])
+        course = Course.objects.get(id=course_id)
+        collection.course.add(course)
+    except Course.DoesNotExist:
+        return Response({'error': 'User not found'}, status= status.HTTP_404_NOT_FOUND)
     
+    collection.user.add(user)
+
+    serializer = CollectionSerializer(collection, many=False)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def CollectionAssoc(request, pk, course_pk):
+    try:
+        collection=CourseCollection.objects.get(id=pk)
+        course= Course.objects.get(id=course_pk)
+    except CourseCollection.DoesNotExist:
+        return Response({'error':'Collection not found'}, status=status.HTTP_204_NO_CONTENT)
+    except Course.DoesNotExist:
+        return Response({'error':'Course not found'}, status=status.HTTP_204_NO_CONTENT)
+    
+    asso = request.data.get('asso')
+    if asso == "add":
+        collection.course.add(course)
+        return Response({'message': 'Enrolled successfully'}, status=status.HTTP_200_OK)
+    if asso == "remove":
+        collection.course.remove(course)
+        return Response({'message': 'Unerolled successfully'}, status=status.HTTP_200_OK)

@@ -14,6 +14,7 @@ urlpatterns = [
     path('courses/<int:pk>/', views.getCourse, name="course"),
     path('courses/<int:pk>/lessons/new/', views.createLesson, name="create_lesson"),
     path('courses/<int:pk>/lessons/<int:lesson_pk>/', views.getLesson, name="lesson"),
+    path('courses/<int:pk>/students/<int:student_pk>/', views.studentAsso, name = "student_asso"),
     path('lessons/<int:pk>/update/', views.updateLesson, name="update_lesson"),
     path('lessons/<int:pk>/delete/', views.deleteLesson, name="delete_lesson"),
     path('lessons/<int:pk>/assessments/', views.getAssessments, name="assessments"),
@@ -25,4 +26,6 @@ urlpatterns = [
     path('aiscore/', views.AiScore, name="ai_score"),
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('collection/new', views.CollectionCreate, name="collection_create"),
+    path('collection/<int:pk>/courses/<int:course_pk>/', views.CollectionAssoc, name="collection_assoc")
 ]

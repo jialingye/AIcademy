@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Course(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=1000)
-    tag = models.CharField(max_length=100, default='Education')
+    tag = models.CharField(max_length=100, default='')
     is_complete = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -16,6 +16,10 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def enrollment_count(self):
+        return self.students.count()
+    
 
 class Lesson(models.Model):
     title = models.CharField(max_length=100)
@@ -41,17 +45,7 @@ class Assessment(models.Model):
         else:
             return self.question
 
-class StudentInput(models.Model):
-    input = models.TextField()
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="input")
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="input")
 
-    def __str__(self):
-        max_length= 50
-        if len(self.input)> max_length:
-            return self.input[:max_length-3]+"..."
-        else:
-            return self.input
 
 class Score(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="scores")
@@ -70,7 +64,7 @@ class Score(models.Model):
 
 class CourseCollection(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField(max_length = 2000)
+    description = models.TextField(max_length = 2000, blank=True)
     course = models.ManyToManyField(Course)
     user= models.ManyToManyField(User)
 
