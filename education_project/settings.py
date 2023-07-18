@@ -128,23 +128,25 @@ WSGI_APPLICATION = 'education_project.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'AIcademy',
-    'USER': os.environ['DB_USER'],
-    'PASSWORD': os.environ['DB_PW'],
-    'HOST': os.environ['DB_HOST'],
-    'PORT': '5432',
-  }
-}
+# DATABASES = {
+#   'default': {
+#     'ENGINE': 'django.db.backends.postgresql',
+#     'NAME': 'AIcademy',
+#     'USER': os.environ['DB_USER'],
+#     'PASSWORD': os.environ['DB_PW'],
+#     'HOST': os.environ['DB_HOST'],
+#     'PORT': '5432',
+#   }
+# }
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': dj_database_url.config(
+        default=os.environ['DATABASE_URL'],
         # Feel free to alter this value to suit your needs.
+
         conn_max_age=600
     )
 }
