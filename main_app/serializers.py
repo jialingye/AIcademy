@@ -25,6 +25,7 @@ class CourseSerializer(ModelSerializer):
         fields = ['id','title', 'description', 'tag', 'is_complete', 'updated', 'created', 'instructor', 'students', 'lessons']
 
 class CollectionSerializer(ModelSerializer):
+    course = CourseSerializer(many=True, read_only=True)
     class Meta:
         model = CourseCollection
         fields = '__all__'

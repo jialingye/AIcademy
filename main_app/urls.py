@@ -29,5 +29,6 @@ urlpatterns = [
     path('collection/', views.GetCollections, name="get_collection"),
     path('collection/<int:pk>/', views.UserCollection, name="user_collection"),
     path('collection/new/', views.CollectionCreate, name="collection_create"),
-    path('collection/<int:pk>/courses/<int:course_pk>/', views.CollectionAssoc, name="collection_assoc")
+    path('collection/<int:pk>/courses/<int:course_pk>/', views.CollectionAssoc, name="collection_assoc"),
+    path('collection/<int:pk>/user/<int:user_pk>/', views.UserAssoc, name="user_assoc" ),
 ]

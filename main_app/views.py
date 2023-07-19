@@ -335,3 +335,21 @@ def UserCollection(request, pk):
         return Response(serializer.data)
     except CourseCollection.DoesNotExist:
         return Response(status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+def UserAssoc(request, pk, user_pk):
+    try:
+        collection=CourseCollection.objects.get(id=pk)
+        user= User.objects.get(id=user_pk)
+    except CourseCollection.DoesNotExist:
+        return Response({'error':'Collection not found'}, status=status.HTTP_204_NO_CONTENT)
+    except User.DoesNotExist:
+        return Response({'error':'User not found'}, status=status.HTTP_204_NO_CONTENT)
+    
+    asso = request.data.get('asso')
+    if asso == "add":
+        collection.user.add(user)
+        return Response({'message': 'Enrolled successfully'}, status=status.HTTP_200_OK)
+    if asso == "remove":
+        collection.user.remove(user)
+        return Response({'message': 'Unerolled successfully'}, status=status.HTTP_200_OK)
