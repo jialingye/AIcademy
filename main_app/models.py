@@ -17,23 +17,6 @@ class Course(models.Model):
     def __str__(self):
         return self.title
     
-    # def enrollment_count(self):
-    #     return self.students.count()
-    
-    # def get_course_progress(self,student):
-    #     total_valid_score = 0
-    #     total_score = 0
-    #     for lesson in self.lessons.all():
-    #         for assessment in lesson.assessments.all():
-    #             try:
-    #                 score = assessment.scores.get(student=student)
-    #                 total_score+=10
-    #                 if score.score>=5:
-    #                     total_valid_score+=score.score
-    #             except Score.DoesNotExist:
-    #                 pass
-    #     progress = 0 if total_score == 0 else (total_valid_score/total_score) *100
-
 class Lesson(models.Model):
     title = models.CharField(max_length=100)
     material = models.TextField()
