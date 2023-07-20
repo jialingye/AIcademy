@@ -34,6 +34,9 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+
+
+
 #################################################Courses###########################################################
 @api_view(['GET'])
 def getCourses(request):
@@ -295,8 +298,6 @@ def CollectionCreate(request):
         collection.course.add(course)
     except Course.DoesNotExist:
         return Response({'error': 'User not found'}, status= status.HTTP_404_NOT_FOUND)
-    
-    collection.user.add(user)
 
     serializer = CollectionSerializer(collection, many=False)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -353,3 +354,23 @@ def UserAssoc(request, pk, user_pk):
     if asso == "remove":
         collection.user.remove(user)
         return Response({'message': 'Unerolled successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+def CollectionDelete(request, pk):
+    collection = CourseCollection.objects.get(id=pk)
+    collection.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['PUT'])
+def CollectionUpdate(request, pk):
+    try:
+        collection = CourseCollection.objects.get(id=pk)
+    except CourseCollection.DoesNotExist:
+        return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    collection.title = request.data.get('title', collection.title)
+    collection.description = request.data.get('description', collection.description)
+    collection.save()
+   
+    serializer = CollectionSerializer(collection, many=False)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)

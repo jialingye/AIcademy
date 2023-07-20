@@ -121,12 +121,12 @@ WSGI_APPLICATION = 'education_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'school',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME':'school',
+#     }
+# }
 
 # DATABASES = {
 #   'default': {
@@ -142,14 +142,14 @@ DATABASES = {
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ['DATABASE_URL'],
-#         # Feel free to alter this value to suit your needs.
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ['DATABASE_URL'],
+        # Feel free to alter this value to suit your needs.
 
-#         conn_max_age=600
-#     )
-# }
+        conn_max_age=600
+    )
+}
 
 
 # Password validation
