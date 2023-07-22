@@ -3,15 +3,16 @@ from django.shortcuts import get_object_or_404
 import openai
 from django.conf import settings
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from .models import Course, Lesson, Assessment, Score, CourseCollection
-from .serializers import CourseSerializer, LessonSerializer, AssessmentSerializer, ScoreSerializer, CollectionSerializer
+from .serializers import CourseSerializer, LessonSerializer, AssessmentSerializer, ScoreSerializer, CollectionSerializer, UserRegistrationSerializer
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -33,6 +34,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 
@@ -79,7 +87,7 @@ def updateCourse(request, pk):
     
     # if request.user != course.instructor:
     #     raise PermissionDenied('You do not have permission to update this course.')
-    
+    print(request.user)
     course.title = request.data.get('title', course.title)
     course.description = request.data.get('description', course.description)
     course.tag=request.data.get('tag', course.tag)
@@ -95,7 +103,7 @@ def deleteCourse(request, pk):
         print(course)
     except Course.DoesNotExist:
         return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     course.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -303,7 +311,7 @@ def CollectionCreate(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
+@api_view(['POST']) 
 def CollectionAssoc(request, pk, course_pk):
     try:
         collection=CourseCollection.objects.get(id=pk)
