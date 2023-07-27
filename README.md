@@ -4,7 +4,7 @@
 ## Technology
 * **Django:** A powerful Python web framework for building robust and scalable web applications.
 * **PostgreSQL:** A reliable and efficient open-source relational database management system.
-* **GPT-3 API:** OpenAI's state-of-the-art natural language processing model, powering interactive learning experiences.
+* **GPT-3 API:** OpenAI's state-of-the-art natural language processing model, powering interactive learning experiences.A 
 
 ## Features
 ### MVP Goals
