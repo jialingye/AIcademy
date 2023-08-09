@@ -1,10 +1,10 @@
-# AI School
-[AIcademy](https://casa-amor-airbnb.onrender.com/) is a re-creation of Airbnb, empowering users to find their ideal honeymoon destination. 
+# AIcademy
+[AIcademy](https://aicademybackend.onrender.com) is an innovative online learning platform that empowers students to explore the exciting world of Artificial Intelligence. This repository contains the frontend codebase for the AIcademy web application.
 
 ## Technology
 * **Django:** A powerful Python web framework for building robust and scalable web applications.
 * **PostgreSQL:** A reliable and efficient open-source relational database management system.
-* **GPT-3 API:** OpenAI's state-of-the-art natural language processing model, powering interactive learning experiences.A 
+* **GPT-3 API:** OpenAI's state-of-the-art natural language processing model, powering interactive learning experiences.
 
 ## Features
 ### MVP Goals
